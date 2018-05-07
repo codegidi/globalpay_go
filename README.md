@@ -1,10 +1,10 @@
-# globalpay_go
+# Globalpay_go
 
 Global pay go  is a library for using the [Globalpay] API for go
 
 
 ### Installing
-import "github.com/rpip/Globalpay-go"
+import "github.com/codegidi/Globalpay-go"
 
 ### Usage
 *    The steps for carrying out a transaction is as follows:
