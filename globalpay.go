@@ -91,6 +91,25 @@ func NewClient(key string, httpClient *http.Client) *Client {
 	return c
 }
 
+func NewClientAuth(httpClient *http.Client) *Client {
+	if httpClient == nil {
+		httpClient = &http.Client{Timeout: defaultHTTPTimeout}
+	}
+
+	u, _ := url.Parse(baseURL)
+	c := &Client{
+		client:         httpClient,
+		baseURL:        u,
+		LoggingEnabled: true,
+		Log:            log.New(os.Stderr, "", log.LstdFlags),
+	}
+
+	c.common.client = c
+	c.Transaction = (*TransactionService)(&c.common)
+
+	return c
+}
+
 // Call actually does the HTTP request to Paystack API
 func (c *Client) Call(method, path string, body, v interface{}) error {
 	var buf io.ReadWriter
@@ -106,7 +125,7 @@ func (c *Client) Call(method, path string, body, v interface{}) error {
 
 	if err != nil {
 		if c.LoggingEnabled {
-			c.Log.Printf("Cannot create Paystack request: %v\n", err)
+			c.Log.Printf("Cannot create Globalpay request: %v\n", err)
 		}
 		return err
 	}

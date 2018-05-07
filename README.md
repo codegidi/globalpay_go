@@ -1,41 +1,66 @@
 # globalpay_go
-Global pay go libuary
 
-Usage:
+Global pay go  is a library for using the [Globalpay] API for go
 
-	import "github.com/rpip/Globalpay-go"
 
-	apiKey := "sk_test_b748a89ad84f35c2f1a8b81681f956274de048bb"
+### Installing
+import "github.com/rpip/Globalpay-go"
 
-	// second param is an optional http client, allowing overriding of the HTTP client to use.
-	// This is useful if you're running in a Google AppEngine environment
-	// where the http.DefaultClient is not available.
-	client := Globalpay.NewClient(apiKey)
+### Usage
+*    The steps for carrying out a transaction is as follows:
+*    1. Get an access token by calling the Client Authorisation method
+*    2. Use the access_token to send initiate your transaction by calling the Transaction initiaion method
+*    3. Redirect to GlobalPay transaction interface using the redirectUri retured in the Transaction initiation call
+*    4. After transaction has been done, you will be redirected to the provided redirectUrl provided with the transactionReference as a querystring
+*    5. Validate the result by using the Retrieve transaction call
 
-	recipient := &TransferRecipient{
-		Type:          "Nuban",
-		Name:          "Customer 1",
-		Description:   "Demo customer",
-		AccountNumber: "0100000010",
-		BankCode:      "044",
-		Currency:      "NGN",
-		Metadata:      map[string]interface{}{"job": "Plumber"},
+
+#### Client Authentication
+	client := Globalpay.NewClientAuth()
+
+	clientRequest := &TransactionRegistrationRequest{
+		GrantType:      "{string}",
+		Username:       "{string}",
+		Password:   	"{string}",
+		ClientId: 		"{string}",
+		Scope:      	"{string}",
+		ClientSecret:   "{string}",
 	}
 
-	recipient1, err := client.Transfer.CreateRecipient(recipient)
+	clientAuthenticationResponse, err := client.Transaction.AuthenticateClient(transactionRequest)
 
-	req := &TransferRequest{
-		Source:    "balance",
-		Reason:    "Delivery pickup",
-		Amount:    30,
-		Recipient: recipient1.RecipientCode,
+
+##### Transaction Initialization
+    accessToken := {ACCESS TOKEN}
+	client := Globalpay.NewClient(accessToken)
+
+	transactionRequest := &TransactionRegistrationRequest{
+		Name : 				"{string}",
+		ReturnUrl : 		"{string}",
+		CustomerIp : 		"{string}",
+		MerchantReference : "{string}",
+		MerchantId : 		"{string}",
+		Description : 		"{string}",
+		CurrencyCode : 		"{string}",
+		TotalAmount : 		"{string}",
+		PaymentMethod : 	"{string}",
+		TransactionType : 	"{string}",
+		ConnectionMode : 	"{string}",
+		Customer : map[string]interface{}{"email":"{string}","mobile":"{string}","firstname":"{string}","lastname":"{string}"},
 	}
 
-	transfer, err := client.Transfer.Initiate(req)
+	transactionInitiationResponse, err := client.Transaction.Initialize(transactionRequest)
 
-	// retrieve list of plans
-	plans, err := client.Plan.List()
+##### Transaction Verification
+   	accessToken := {ACCESS TOKEN}
+	client := Globalpay.NewClient(accessToken)
 
-	for i, plan := range plans.Values {
-	  fmt.Printf("%+v", plan)
+	transactionToVerify := &RetrieveTransactionRequest{
+		MerchantId : 				"{string}",
+		MerchantReference : 		"{string}",
+		TransactionReference : 		"{string}",
 	}
+	
+	transactionVerificationResponse, err := client.Transaction.Verify(transactionToVerify)
+
+
