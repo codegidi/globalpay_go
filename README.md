@@ -20,10 +20,7 @@ import "github.com/codegidi/Globalpay_go"
 
 	clientRequest := &TransactionRegistrationRequest{
 		GrantType:      "{string}",
-		Username:       "{string}",
-		Password:   	"{string}",
 		ClientId: 		"{string}",
-		Scope:      	"{string}",
 		ClientSecret:   "{string}",
 	}
 

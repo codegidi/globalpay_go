@@ -6,10 +6,7 @@ type TransactionService service
 
 type ClientAuthenticationRequest struct {
 	GrantType string `json:"grant_type,omitempty"`
-	Username string `json:"username,omitempty"`
-	Password string `json:"password,omitempty"`
 	ClientId string `json:"client_id,omitempty"`
-	Scope string `json:"scope,omitempty"`
 	ClientSecret string `json:"client_secret,omitempty"`
 }
 
