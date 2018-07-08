@@ -31,6 +31,10 @@ import "github.com/codegidi/Globalpay_go"
     accessToken := {ACCESS TOKEN}
 	client := Globalpay.NewClient(accessToken)
 
+	product := map[string][]map[string]string{
+            "Products":   {{"Name": "{string}", "UnitPrice" : "{string}", "Quantity" : "{string}"}, {"Name": "{string}", "UnitPrice" : "{string}", "Quantity" : "{string}"}},
+    }
+
 	transactionRequest := &TransactionRegistrationRequest{
 		Name : 				"{string}",
 		ReturnUrl : 		"{string}",
@@ -38,12 +42,13 @@ import "github.com/codegidi/Globalpay_go"
 		MerchantReference : "{string}",
 		MerchantId : 		"{string}",
 		Description : 		"{string}",
-		CurrencyCode : 		"{string}",
+		CurrencyCode : 		"{string eg NGN for naira}",
 		TotalAmount : 		"{string}",
 		PaymentMethod : 	"{string}",
 		TransactionType : 	"{string}",
 		ConnectionMode : 	"{string}",
-		Customer : map[string]interface{}{"email":"{string}","mobile":"{string}","firstname":"{string}","lastname":"{string}"},
+		Customer : map[string]interface{}{"Email":"{string}","Mobile":"{string}","Firstname":"{string}","Lastname":"{string}"},
+		Product : product
 	}
 
 	transactionInitiationResponse, err := client.Transaction.Initialize(transactionRequest)

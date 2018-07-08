@@ -5,20 +5,13 @@ import (
 	"encoding/json"
 	"io"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"net/url"
-	"os"
 	"time"
 
 	"github.com/mitchellh/mapstructure"
-)
-
-const (
-	version = "0.1.0"
-	defaultHTTPTimeout = 60 * time.Second
-	baseURL = "https://globalpay.azurewebsites.net"
-	tokenURL = "http://globalpayauthserver.azurewebsites.net/connect/token"
+	"log"
+	"os"
 )
 
 type service struct {
@@ -58,6 +51,15 @@ func (v RequestValues) MarshalJSON() ([]byte, error) {
 	return json.Marshal(m)
 }
 
+const (
+	version = "0.1.0"
+	defaultHTTPTimeout = 60 * time.Second
+	baseURLStaging = "https://globalpay.azurewebsites.net"
+	tokenURLStaging = "http://globalpayauthserver.azurewebsites.net/connect/token"
+	baseURLLive = "https://globalpay.azurewebsites.net"
+	tokenURLLive = "http://globalpayauthserver.azurewebsites.net/connect/token"
+)
+
 // ListMeta is pagination metadata for paginated responses from the Globalpay API
 type ListMeta struct {
 	Total     int `json:"total"`
@@ -76,7 +78,7 @@ func NewClient(key string, httpClient *http.Client) *Client {
 		httpClient = &http.Client{Timeout: defaultHTTPTimeout}
 	}
 
-	u, _ := url.Parse(baseURL)
+	u, _ := url.Parse(baseURLStaging)
 	c := &Client{
 		client:         httpClient,
 		key:            key,
@@ -96,7 +98,7 @@ func NewClientAuth(httpClient *http.Client) *Client {
 		httpClient = &http.Client{Timeout: defaultHTTPTimeout}
 	}
 
-	u, _ := url.Parse(baseURL)
+	u, _ := url.Parse(tokenURLStaging)
 	c := &Client{
 		client:         httpClient,
 		baseURL:        u,
@@ -110,7 +112,7 @@ func NewClientAuth(httpClient *http.Client) *Client {
 	return c
 }
 
-// Call actually does the HTTP request to Paystack API
+// Call actually does the HTTP request
 func (c *Client) Call(method, path string, body, v interface{}) error {
 	var buf io.ReadWriter
 	if body != nil {

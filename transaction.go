@@ -1,6 +1,9 @@
 package globalpay
 
-import "fmt"
+import (
+	"fmt"
+)
+
 
 type TransactionService service
 
@@ -41,6 +44,7 @@ type TransactionRegistrationRequest struct {
 	TransactionType string `json:"transactionType,omitempty"`
 	ConnectionMode string `json:"connectionmode,omitempty"`
 	Customer Customer `json:"customer,omitempty"`
+	Product []Product `json:"product,omitempty"`
 }
 
 type TransactionRegistrationResponse struct {
@@ -93,17 +97,9 @@ func (s *TransactionService) Verify(txn *RetrieveTransactionRequest) (*RetrieveT
 
 // Authorization
 func (s *TransactionService) AuthenticateClient(req *ClientAuthenticationRequest) (*ClientAuthenticationResponse, error) {
-	txn := &ClientAuthenticationRequest{}
-	err := s.client.Call("POST", "/transaction/charge_authorization", req, txn)
+	txn := &ClientAuthenticationResponse{}
+	err := s.client.CallFormPost("POST", "", req, txn)
 	return txn, err
 }
 
 
-// CheckAuthorization checks authorization
-// For more details see https://developers.paystack.co/v1.0/reference#check-authorization
-func (s *TransactionService) CheckAuthorization(req ClientAuthenticationRequest) (ClientAuthenticationResponse, error) {
-	u := fmt.Sprintf("/transaction/check_reauthorization")
-	resp := ClientAuthenticationResponse{}
-	err := s.client.Call("POST", u, nil, &resp)
-	return resp, err
-}
