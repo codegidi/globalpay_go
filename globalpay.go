@@ -54,10 +54,10 @@ func (v RequestValues) MarshalJSON() ([]byte, error) {
 const (
 	version = "0.1.0"
 	defaultHTTPTimeout = 60 * time.Second
-	baseURLStaging = "https://globalpay.azurewebsites.net"
-	tokenURLStaging = "http://globalpayauthserver.azurewebsites.net/connect/token"
-	baseURLLive = "https://globalpay.azurewebsites.net"
-	tokenURLLive = "http://globalpayauthserver.azurewebsites.net/connect/token"
+	baseURLStaging = "https://gpaygatewayapi.azurewebsites.net/api/v3/Payment"
+	tokenURLStaging = "https://gpayauthorisation.azurewebsites.net/connect/token"
+	baseURLLive = "https://api.globalpay.com.ng/api/v3/Payment"
+	tokenURLLive = "https://auth.globalpay.com.ng/connect/token"	
 )
 
 // ListMeta is pagination metadata for paginated responses from the Globalpay API
@@ -73,12 +73,18 @@ type ListMeta struct {
 // and HTTP client, allowing overriding of the HTTP client to use.
 // This is useful if you're running in a Google AppEngine environment
 // where the http.DefaultClient is not available.
-func NewClient(key string, httpClient *http.Client) *Client {
+func NewClient(key string, isLive bool, httpClient *http.Client) *Client {
 	if httpClient == nil {
 		httpClient = &http.Client{Timeout: defaultHTTPTimeout}
 	}
 
-	u, _ := url.Parse(baseURLStaging)
+	if isLive {
+		url = baseURLLive
+	} else {
+		url = baseURLStaging
+	}
+
+	u, _ := url.Parse(url)
 	c := &Client{
 		client:         httpClient,
 		key:            key,
@@ -93,12 +99,18 @@ func NewClient(key string, httpClient *http.Client) *Client {
 	return c
 }
 
-func NewClientAuth(httpClient *http.Client) *Client {
+func NewClientAuth(isLive bool, httpClient *http.Client) *Client {
 	if httpClient == nil {
 		httpClient = &http.Client{Timeout: defaultHTTPTimeout}
 	}
 
-	u, _ := url.Parse(tokenURLStaging)
+	if isLive {
+		url = tokenURLLive
+	} else {
+		url = tokenURLStaging
+	}
+
+	u, _ := url.Parse(url)
 	c := &Client{
 		client:         httpClient,
 		baseURL:        u,
@@ -158,7 +170,7 @@ func (c *Client) Call(method, path string, body, v interface{}) error {
 }
 
 
-// Call actually does the HTTP request to Paystack API
+// Call actually does the HTTP request to Globalpay API
 func (c *Client) CallFormPost(method, path string, body, v interface{}) error {
 	var buf io.ReadWriter
 	if body != nil {
@@ -173,7 +185,7 @@ func (c *Client) CallFormPost(method, path string, body, v interface{}) error {
 
 	if err != nil {
 		if c.LoggingEnabled {
-			c.Log.Printf("Cannot create Paystack request: %v\n", err)
+			c.Log.Printf("Cannot create Globalpay request: %v\n", err)
 		}
 		return err
 	}

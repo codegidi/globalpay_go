@@ -81,7 +81,7 @@ type ErrorDescription struct {
 
 // Initialize initiates a transaction process
 func (s *TransactionService) Initialize(txn *TransactionRegistrationRequest) (*TransactionRegistrationResponse, error) {
-	u := fmt.Sprintf("/api/v3/Payment/SetRequest")
+	u := fmt.Sprintf("/SetRequest")
 	resp := &TransactionRegistrationResponse{}
 	err := s.client.Call("POST", u, txn, &resp)
 	return resp, err
@@ -89,7 +89,7 @@ func (s *TransactionService) Initialize(txn *TransactionRegistrationRequest) (*T
 
 // Verify checks that transaction with the given reference exists
 func (s *TransactionService) Verify(txn *RetrieveTransactionRequest) (*RetrieveTransactionResponse, error) {
-	u := fmt.Sprintf("/api/v3/Payment/Retrieve")
+	u := fmt.Sprintf("/Retrieve")
 	resp := &RetrieveTransactionResponse{}
 	err := s.client.Call("POST", u, txn, &resp)
 	return resp, err

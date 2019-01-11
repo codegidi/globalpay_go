@@ -29,7 +29,7 @@ import "github.com/codegidi/Globalpay_go"
 
 ##### Transaction Initialization
     accessToken := {ACCESS TOKEN}
-	client := Globalpay.NewClient(accessToken)
+	client := Globalpay.NewClient(isLive "{bool}", accessToken)
 
 	product := map[string][]map[string]string{
             "Products":   {{"Name": "{string}", "UnitPrice" : "{string}", "Quantity" : "{string}"}, {"Name": "{string}", "UnitPrice" : "{string}", "Quantity" : "{string}"}},
